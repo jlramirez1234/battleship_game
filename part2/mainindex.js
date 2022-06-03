@@ -1,17 +1,14 @@
 const rs = require(`readline-sync`);
 
-//function gameStart(){
+function gameStart(){
 
-
-// const initalQuestion = rs.keyInYN(`Hello! Would you like to play Battleship? `);
-
-// if(initalQuestion){ 
-
+  
+const initalQuestion = rs.keyInYN(`Hello! Would you like to play Battleship? `);
+if(initalQuestion){ 
 
 //Variables
 const alphabet =  ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 let gameBoard = [];
-let allShips;
 let shipsRemaining;
 let shipsCoord = [];
 let ships = [
@@ -29,23 +26,14 @@ let shipUnitCount = 17;
 const createGrid = (size) =>{
     let r;
     let c = 0;	
-	for (r = 0; r < size; r++) {
+	  for (r = 0; r < size; r++) {
 		gameBoard[r] = [];
 		for (c = 0; c < size; c++) {
-			gameBoard[r][c] = `${alphabet[r]}${c + 1}`;
+		gameBoard[r][c] = `${alphabet[r]}${c + 1}`;
 		}
-	}
+    }
 };
 createGrid(alphabet.length);
-//console.log(gameBoard);
-
-// const boomTracker = () => {
-//     ships.forEach(ship => {
-//         boom.push({name: ship.type, squares: ship.units, boom: 0, isDestroyed: false})
-//     });
-// };
-//boomTracker();
-
 
 //placing the ships
 const shipPlacement = () => {
@@ -53,7 +41,6 @@ const shipPlacement = () => {
        generateShips(ships) 
        shipsRemaining++
     }
-    //boomTracker();
 };
 shipPlacement();
 
@@ -101,58 +88,84 @@ const generateShips = (boat) => {
   for (let i = 0; i < ships.length; i++) {
     generateShips(ships[i]);
   }
- console.log(shipsCoord.flat());
+//  console.log(shipsCoord.flat());
+
+ function destructuring(shot) {
+   let missile = shot.toUpperCase();
+   let letter = missile.charAt(0);
+   let letterConversion = alphabet.indexOf(letter);
+   let number = parseInt(missile.charAt(1)) - 1;
+   //If there is more than 2 characters in the action shot. ie A10;
+   if(missile.length > 2){
+     let ifnumberIsTen = parseInt(missile.charAt(2));
+     let twoStepJoining = 9 + ifnumberIsTen;
+     let yetAnotherStepJoining = "" + letterConversion + twoStepJoining;
+     let finaltwoStepNumber = parseInt(yetAnotherStepJoining);
+     return(finaltwoStepNumber);
+   };
+   let joining = "" + letterConversion + number;
+   let finalNumber = parseInt(joining);
+   return finalNumber;
+   
+ };
+//  destructuring(askingForShot);
+
+ function hitOrMiss(shot){
+    if(shipsCoord.flat().includes(destructuring(shot))){
+    shipUnitCount--;
+    console.log(`Hit! There is ${shipUnitCount} spaces left to attack!`);
+    // console.log(shipUnitCount);
+    while(shipUnitCount > 0){
+      firingShot();
+    }
+    if (shipUnitCount === 0){
+      gameOver();
+    }
+     firingShot();
+    } else {
+    console.log(`Miss! Keep shooting!`);
+    firingShot();
+  }
+}
+
 
 
 //firing technique
 const firingShot = () =>{
-    let askingForShot = rs.question(`Please fire at a coordinate to strike! ei "A1" `);
-    shotsTaken.push(askingForShot.toUpperCase());
-    console.log(shotsTaken);
-    console.log(askingForShot);
-    
-   //matching the given answer from *askingForShot* to that of the numbers. A3 shoots out 02 or just 2.
-    function destructuring(shot) {
-      let missile = shot.toUpperCase();
-      let letter = missile.charAt(0);
-      let letterConversion = alphabet.indexOf(letter);
-      let number = parseInt(missile.charAt(1)) - 1;
-      //If there is more than 2 characters in the action shot. ie A10;
-      if(missile.length > 2){
-        let ifnumberIsTen = parseInt(missile.charAt(2));
-        let twoStepJoining = 9 + ifnumberIsTen;
-        let yetAnotherStepJoining = "" + letterConversion + twoStepJoining;
-        let finaltwoStepNumber = parseInt(yetAnotherStepJoining);
-        return(finaltwoStepNumber);
-      };
-      let joining = "" + letterConversion + number;
-      let finalNumber = parseInt(joining);
-      return finalNumber;
-      
-    };
-    destructuring(askingForShot);
-
-     // if the shot taken by user does not include that of which has already been taken, this verifies if the shot is hit or miss. 
-    
-      if(shipsCoord.flat().includes(destructuring(askingForShot))){
-        console.log(`Hit!`);
-        firingShot();
-      } else if (shotsTaken.includes(askingForShot)){
+    let askingForShot = rs.question(`Please fire at a coordinate to strike! ie \`A1\``, {
+      limit:  /^[a-j][1-9]0?$/i,
+      limitMessage: 'That is not a proper location. Try again.'
+    });
+    // console.log(shotsTaken);
+    // console.log(askingForShot);
+      // if the shot taken by user does not include that of which has already been taken, this verifies if the shot is hit or miss. 
+     if(shotsTaken.includes(destructuring(askingForShot))){
         console.log(`You have already fired at this location! Miss!`);
         firingShot();
-      } else {
-        console.log(`Miss! Keep shooting!`);
-        firingShot();
+      }else{ 
+        shotsTaken.push(destructuring(askingForShot));
+        hitOrMiss(askingForShot);
+       };
+
+    }
+    firingShot();
+
+  function gameOver(){
+    let endGame = rs.keyInYN(`Great job! You have destroyed all units of every ship! Would you like to play again? `);
+      if(endGame){
+        gameStart();
       }
+      else{
+        console.log(`Okay, sounds good! I will be here when you are ready!`);
+        gameStart();
+      }
+  }
+ 
+  //console.log(gameBoard);
   
+  } else {
+  console.log(`Okay, sounds good! I will be here when you are ready!`);
+  gameStart();
+  }
 }
-firingShot();
-
-//console.log(gameBoard);
-
-// } else {
-//     console.log(`Okay, sounds good! I will be here when you are ready!`);
-//     gameStart();
-// }
-// }
-// gameStart();
+gameStart();

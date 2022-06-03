@@ -97,7 +97,7 @@ const gameLayout = () => {
               }
               // console.log(checkForHit(playerStrike(secondGuess)));
 
-              console.log({ shotsTaken });
+              
               // if(isExistingStrike(playerStrike(secondGuess) === hit)){
               //     ships.length--;
               // }
@@ -130,8 +130,7 @@ const gameLayout = () => {
   if (ships.length === 0) {
     console.log(`Hit!! You have sunk a battleship!`);
     const replayGame = readlineSync.keyInYN(
-      `Awesome Job!
-      You have sunk all battleships. Would you like to play again?`
+      `Awesome Job! You have sunk all battleships. Would you like to play again?`
     );
     if (replayGame) {
       gameLayout();
